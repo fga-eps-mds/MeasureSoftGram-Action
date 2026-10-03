@@ -47,11 +47,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Action MeasureSoftGram
         id: msgram
-        uses: fga-eps-mds/MeasureSoftGram-Action@v2.1.5
+        uses: fga-eps-mds/MeasureSoftGram-Action@v2 # Exemplo: utilize a tag da última release disponível
         with:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           sonarProjectKey: "nome-da-org_nome-do-repositorio"
@@ -62,6 +62,8 @@ jobs:
           collectGithubMetrics: true     # obrigatório
           usLabel: "US"
 ```
+
+> **Nota:** A tag `@v2` no exemplo acima é ilustrativa. Consulte sempre a [página de Releases do repositório](https://github.com/fga-eps-mds/MeasureSoftGram-Action/releases) para verificar a versão mais recente disponível.
 
 ## Entradas
 
@@ -78,12 +80,20 @@ jobs:
 
 Lembre-se que é necessário que você disponha do seu token do GitHub para executar o MeasureSoftGram. Recomendamos o uso dos [Segredos do GitHub](https://docs.github.com/pt/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository) para armazenar estas credenciais de forma segura.
 
-
 ## Resultados da análise no pull request
 
 Os resultados são adicionados ao website do MeasureSoftwareGram e exibidos nesse gráfico:
 
 ![Resultado Web](./assets/images/resultado_msgram.png)
+
+## Release e Versionamento
+
+O repositório adota versionamento semântico automatizado na branch `main` (`.github/workflows/release.yml`):
+
+- **Versionamento via Google Release Please:** O cálculo da nova versão e a geração do `CHANGELOG.md` são realizados automaticamente com base na **última release publicada no repositório** e nos *Conventional Commits* integrados na `main`, abrindo um Pull Request formal de release e empacotando atomicamente o bundle `dist/index.js` após a aprovação.
+- **Tags Flutuantes de Major (ex: `@v1`, `@v2`):** A esteira atualiza dinamicamente a tag flutuante correspondente à versão Major da última release (`v<MAJOR>`), permitindo que os repositórios clientes recebam melhorias e correções retrocompatíveis automaticamente (enquanto congela majors anteriores caso ocorra uma *breaking change*).
+- **Tags Semânticas Fixas (ex: `@v2.2.0`):** Disponíveis para fluxos que necessitam fixar uma versão exata e imutável.
+
 ## Desenvolvimento local
 
 O gerenciador de pacotes padrão deste repositório é o **Yarn** (o `yarn.lock` é o
